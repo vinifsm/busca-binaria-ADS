@@ -2,6 +2,7 @@
 #include <conio.h>
 #include <string.h>
 #include <locale.h>
+#include <time.h>
 using namespace std;
 
 struct Alunos{
@@ -116,6 +117,46 @@ string buscarAlunos (struct Alunos a1[], struct IdxAlunos i1[], int cont, int co
 	}
 }
 
+string buscarLivrosDisponiveis (struct Livros l1[], struct IdxLivros i1[], int cont, int cod){
+	int i = 0, f = cont, x = 0;
+    int m = (i + f) / 2;
+    while (x == 0){
+    for (; f >= i && cod != i1[m].cod; m = (i + f) / 2){
+        if (cod > i1[m].cod)
+            i = m + 1;
+        else
+            f = m - 1;
+    }
+    i = i1[m].end;
+    if (cod == i1[m].cod && strcmp(l1[i].statusEmp,"D") == 0){
+    	strcpy(l1[i].statusEmp,"E");
+		return(l1[i].desc);
+    }
+    else{
+    	cout << "\nNão encontrado. Digite Novamente: ";
+    	cin >> cod;
+	}
+	}
+}
+
+void buscarLivrosEmprestados (struct Livros l1[], struct IdxLivros i1[], int cont, int cod){
+	int i = 0, f = cont, x = 0;
+    int m = (i + f) / 2;
+    for (; f >= i && cod != i1[m].cod; m = (i + f) / 2){
+        if (cod > i1[m].cod)
+            i = m + 1;
+        else
+            f = m - 1;
+    }
+    i = i1[m].end;
+    if (cod == i1[m].cod && strcmp(l1[i].statusEmp,"E") == 0){
+    	strcpy(l1[i].statusEmp,"D");
+    }
+    else{
+    	cout << "\nO livro já foi devolvido" << endl;
+	}
+}
+
 string buscarLivros (struct Livros l1[], struct IdxLivros i1[], int cont, int cod){
 	int i = 0, f = cont, x = 0;
     int m = (i + f) / 2;
@@ -127,13 +168,11 @@ string buscarLivros (struct Livros l1[], struct IdxLivros i1[], int cont, int co
             f = m - 1;
     }
     i = i1[m].end;
-    if ((cod == i1[m].cod)){
-    	strcpy(l1[i].statusEmp,"E");
+    if (cod == i1[m].cod){
 		return(l1[i].desc);
     }
     else{
-    	cout << "\nNão encontrado. Digite Novamente: ";
-    	cin >> cod;;
+		return("Não encontrado");
 	}
 	}
 }
@@ -520,18 +559,18 @@ void emprestarLivros(struct Emprestimos e1[],struct IdxEmprestimos i1[], int &co
 		cout << "Código do livro: ";
 		cin >> codLivro; 
 		e1[cont].codLivro = codLivro;
-		cout << "Descrição: " << buscarLivros(l1,il1,contL,codLivro) << endl;
+		cout << "Descrição: " << buscarLivrosDisponiveis(l1,il1,contL,codLivro) << endl;
 		cout << "Data do empréstimo" << endl;
 		cout << "Dia: ";
 		cin >> e1[cont].diaEmp;
-		cout << "Mês:";
+		cout << "Mês: ";
 		cin >> e1[cont].mesEmp;
 		cout << "Ano: ";
 		cin >> e1[cont].anoEmp;
 		cout << "Data de devolução" << endl;
 		cout << "Dia: ";
 		cin >> e1[cont].diaDev;
-		cout << "Mês:";
+		cout << "Mês: ";
 		cin >> e1[cont].mesDev;
 		cout << "Ano: ";
 		cin >> e1[cont].anoDev;
@@ -556,7 +595,23 @@ void emprestarLivros(struct Emprestimos e1[],struct IdxEmprestimos i1[], int &co
 
 }
 
-void devolverLivros(struct Emprestimos e1[],struct IdxEmprestimos i1[], int &cont, struct Livros l1[], struct IdxLivros il1[], int contL, struct Alunos a1[], struct IdxAlunos ia1[], int contA){
+void devolverLivros(struct Emprestimos e1[],struct IdxEmprestimos idx[], int &cont, int cod, struct Livros l1[], struct IdxLivros il1[], int contL){
+    int i = 0, f = cont;
+    int m = (i + f) / 2;
+    for (; f >= i && cod != idx[m].cod; m = (i + f) / 2){
+        if (cod > idx[m].cod)
+            i = m + 1;
+        else
+            f = m - 1;
+    }
+    i = idx[m].end;
+    if ((cod == idx[m].cod) && strcmp(e1[i].statusEmp,"E") == 0 && e1[i].status == 0){
+        strcpy(e1[i].statusEmp,"D");
+        buscarLivrosEmprestados(l1,il1,contL,e1[i].codLivro);
+        cout << "\n\n Empréstimo devolvido com Sucesso";
+    }
+    else
+        cout << "Livro já foi devolvido ou o código é inválido.";	
 	
 }
 
@@ -578,7 +633,71 @@ void excluirEmprestimo(struct Emprestimos e1[], struct IdxEmprestimos idx[], int
         cout << "Empréstimo não cadastrado";
 }
 
-void mostrarAtrasado(struct Emprestimos e1[],struct IdxEmprestimos i1[], int &cont, struct Livros l1[], struct IdxLivros il1[], int contL, struct Alunos a1[], struct IdxAlunos ia1[], int contA){
+void mostrarAtrasado(struct Emprestimos e1[],struct IdxEmprestimos i1[], int cont, struct Livros l1[], struct IdxLivros il1[], int contL, struct Alunos a1[], struct IdxAlunos ia1[], int contA){
+	int m, dia, mes, ano;
+	struct tm *p;
+    time_t seconds;
+    
+    time(&seconds);
+    p = localtime(&seconds);
+
+	dia = p->tm_mday ;
+	mes = p->tm_mon + 1;
+	ano = p->tm_year + 1900;
+	for(int i = 0;i<cont;i++){
+		m=i1[i].end;
+		if(e1[m].status == 0 && strcmp(e1[m].statusEmp,"E") == 0){
+			if(ano == e1[m].anoDev){
+				if(mes == e1[m].mesDev){
+					if (dia > e1[m].diaDev){
+						cout << "\n\nCódigo do empréstimo: " << e1[m].cod << endl;
+						cout << "RA do aluno: " << e1[m].codRa << endl;
+						cout << "Nome: " << buscarAlunos(a1,ia1,contA,e1[m].codRa) << endl;
+						cout << "Código do livro: " << e1[m].codLivro << endl;
+						cout << "Descrição: " << buscarLivros(l1,il1,contL,e1[m].codLivro) << endl;
+						cout << "Data do empréstimo: " << e1[m].diaEmp << "/" << e1[m].mesEmp << "/" << e1[m].anoEmp << endl;
+						cout << "Data de devolução: " << e1[m].diaDev << "/" << e1[m].mesDev << "/" << e1[m].anoDev << endl;
+					}
+				}
+				else if(mes > e1[m].mesDev){
+					cout << "\n\nCódigo do empréstimo: " << e1[m].cod << endl;
+					cout << "RA do aluno: " << e1[m].codRa << endl;
+					cout << "Nome: " << buscarAlunos(a1,ia1,contA,e1[m].codRa) << endl;
+					cout << "Código do livro: " << e1[m].codLivro << endl;
+					cout << "Descrição: " << buscarLivros(l1,il1,contL,e1[m].codLivro) << endl;
+					cout << "Data do empréstimo: " << e1[m].diaEmp << "/" << e1[m].mesEmp << "/" << e1[m].anoEmp << endl;
+					cout << "Data de devolução: " << e1[m].diaDev << "/" << e1[m].mesDev << "/" << e1[m].anoDev << endl;					
+				}
+			}
+			else if (ano > e1[m].anoDev){
+				cout << "\n\nCódigo do empréstimo: " << e1[m].cod << endl;
+				cout << "RA do aluno: " << e1[m].codRa << endl;
+				cout << "Nome: " << buscarAlunos(a1,ia1,contA,e1[m].codRa) << endl;
+				cout << "Código do livro: " << e1[m].codLivro << endl;
+				cout << "Descrição: " << buscarLivros(l1,il1,contL,e1[m].codLivro) << endl;
+				cout << "Data do empréstimo: " << e1[m].diaEmp << "/" << e1[m].mesEmp << "/" << e1[m].anoEmp << endl;
+				cout << "Data de devolução: " << e1[m].diaDev << "/" << e1[m].mesDev << "/" << e1[m].anoDev << endl;
+			}	
+		}
+	}
+	getch();
+}
+
+void mostrarEmprestimos(struct Emprestimos e1[],struct IdxEmprestimos i1[], int cont, struct Livros l1[], struct IdxLivros il1[], int contL, struct Alunos a1[], struct IdxAlunos ia1[], int contA){
+	int m;
+	for(int i = 0;i<cont;i++){
+		m=i1[i].end;
+		if(e1[m].status == 0 && strcmp(e1[m].statusEmp,"E") == 0){
+					cout << "\n\nCódigo do empréstimo: " << e1[m].cod << endl;
+					cout << "RA do aluno: " << e1[m].codRa << endl;
+					cout << "Nome: " << buscarAlunos(a1,ia1,contA,e1[m].codRa) << endl;
+					cout << "Código do livro: " << e1[m].codLivro << endl;
+					cout << "Descrição: " << buscarLivros(l1,il1,contL,e1[m].codLivro) << endl;
+					cout << "Data do empréstimo: " << e1[m].diaEmp << "/" << e1[m].mesEmp << "/" << e1[m].anoEmp << endl;
+					cout << "Data de devolução: " << e1[m].diaDev << "/" << e1[m].mesDev << "/" << e1[m].anoDev << endl;
+				}
+			}
+	getch();
 }
 
 void menuAlunos (struct Alunos a1[], struct IdxAlunos i1[], int &cont){
@@ -712,6 +831,7 @@ void menuEmprestimos (struct Emprestimos e1[],struct IdxEmprestimos i1[], int &c
 	cout << "\n2 - Devolver Livro";
 	cout << "\n3 - Excluir Empréstimo";
 	cout << "\n4 - Mostrar Empréstimos Atrasados";
+	cout << "\n5 - Mostrar Empréstimos";
 	cout << "\n\nDigite sua opção: ";
 	cin >> option;
 	
@@ -723,13 +843,22 @@ void menuEmprestimos (struct Emprestimos e1[],struct IdxEmprestimos i1[], int &c
 			emprestarLivros(e1,i1,cont,cod,l1,il1,contL,a1,ia1,contA);
 			break;
 		case 2:
-			devolverLivros(e1,i1,cont,l1,il1,contL,a1,ia1,contA);
+			cout << "\n\nDevolução de Livros";
+			cout << "\nCódigo: ";
+    		cin >> cod;
+			devolverLivros(e1,i1,cont,cod,l1,il1,contL);
 			break;
 		case 3:
+			cout << "\n\nExcluir Empréstimos";
+			cout << "\nCódigo: ";
+    		cin >> cod;
 			excluirEmprestimo(e1,i1,cont,cod);
 			break;
 		case 4:
 			mostrarAtrasado(e1,i1,cont,l1,il1,contL,a1,ia1,contA);
+			break;
+		case 5:
+			mostrarEmprestimos(e1,i1,cont,l1,il1,contL,a1,ia1,contA);
 			break;
 		case 0:
 			x=1;

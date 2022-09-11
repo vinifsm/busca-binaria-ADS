@@ -190,18 +190,18 @@ void leituraAlunos (struct Alunos a1[], struct IdxAlunos i1[], int &cont){
     int i = 0;
     for (int saida = 1; i < 20 && saida != 0; i++){
         cout << "\n\nRA do Aluno " << (i+1) << ": ";
-        cin >> a1[i].ra;
+        cin >> a1[i].ra;fflush(stdin);
         if (a1[i].ra > 0){
             cout << "Nome: ";
-            cin >> a1[i].nome;
+            cin.getline(a1[i].nome,41);fflush(stdin);
             cout << "Endereco: ";
-            cin >> a1[i].endereco;
+            cin.getline(a1[i].endereco,51);fflush(stdin);
             cout << "Telefone: ";
-            cin >> a1[i].telefone;
+            cin.getline(a1[i].telefone,13);fflush(stdin);
             cout << "Cidade: ";
-            cin >> a1[i].cidade;
+            cin.getline(a1[i].cidade,31);fflush(stdin);
             cout << "Estado: ";
-            cin >> a1[i].uf;            
+            cin.getline(a1[i].uf,3);fflush(stdin);   
 
 			a1[i].status = 0;
         }
@@ -224,18 +224,18 @@ void leituraEditoras (struct Editoras e1[], struct IdxEditoras i1[], int &cont){
     int i = 0;
     for (int saida = 1; i < 20 && saida != 0; i++){
         cout << "\n\nCodigo da Editora " << (i+1) << ": ";
-        cin >> e1[i].cod;
+        cin >> e1[i].cod;fflush(stdin);
         if (e1[i].cod > 0){
             cout << "Nome: ";
-            cin >> e1[i].nome;
+            cin.getline(e1[i].nome,41);fflush(stdin);
             cout << "Endereco: ";
-            cin >> e1[i].endereco;
+            cin.getline(e1[i].endereco,51);fflush(stdin);
             cout << "Telefone: ";
-            cin >> e1[i].telefone;
+            cin.getline(e1[i].telefone,13);fflush(stdin);
             cout << "Cidade: ";
-            cin >> e1[i].cidade;
+            cin.getline(e1[i].cidade,31);fflush(stdin);
             cout << "Estado: ";
-            cin >> e1[i].uf;
+            cin.getline(e1[i].uf,3);fflush(stdin);
 
 			e1[i].status = 0;
         }
@@ -258,12 +258,12 @@ void leituraLivros (struct Livros l1[], struct IdxLivros i1[], int &cont, struct
     int i = 0;
     for (int saida = 1; i < 20 && saida != 0; i++){
         cout << "\n\nCodigo do Livro " << (i+1) << ": ";
-        cin >> l1[i].cod;
+        cin >> l1[i].cod;fflush(stdin);
         if (l1[i].cod > 0){
             cout << "Descrição: ";
-            cin >> l1[i].desc;
+            cin.getline(l1[i].desc,41);fflush(stdin);
             cout << "Codigo da Editora: ";
-            cin >> l1[i].codEdit;
+            cin >> l1[i].codEdit;fflush(stdin);
     		cout << "Nome da Editora: " << buscarEditoras(e1,ie1, contEdit, l1[i].codEdit) << endl;
 			strcpy(l1[i].statusEmp,"D");
 			l1[i].status = 0;
@@ -286,8 +286,8 @@ void incluirAlunos (struct Alunos a1[], struct IdxAlunos i1[], int &cont, int co
     }
 
     if ((cod == i1[m].cod)){
-        cout << "\n\n Aluno já existe";
-        cout << "RA: ";
+        cout << "\nAluno já existe";
+        cout << "\nRA: ";
     	cin >> cod;
     }
     else{
@@ -295,17 +295,17 @@ void incluirAlunos (struct Alunos a1[], struct IdxAlunos i1[], int &cont, int co
 	}
 }
 
-	a1[cont].ra = cod;
+	a1[cont].ra = cod;fflush(stdin);
     cout << "Nome: ";
-    cin >> a1[cont].nome;
+    cin.getline(a1[cont].nome,41);fflush(stdin);
     cout << "Endereço: ";
-    cin >> a1[cont].endereco;
+    cin.getline(a1[cont].endereco,51);fflush(stdin);
     cout << "Telefone: ";
-    cin >> a1[cont].telefone;
+    cin.getline(a1[cont].telefone,13);fflush(stdin);
     cout << "Cidade: ";
-    cin >> a1[cont].cidade;
+    cin.getline(a1[cont].cidade,31);fflush(stdin);
     cout << "Estado: ";
-    cin >> a1[cont].uf;
+    cin.getline(a1[cont].uf,3);fflush(stdin);
     a1[cont].status = 0;
     // inclusao na area de indices
     if(cont == 0){
@@ -337,8 +337,8 @@ void incluirEditoras (struct Editoras e1[], struct IdxEditoras i1[], int &cont, 
     }
 
     if ((cod == i1[m].cod)){
-        cout << "\n\n Editora já existe";
-        cout << "Código: ";
+        cout << "\nEditora já existe";
+        cout << "\nCódigo: ";
     	cin >> cod;
     }
     else{
@@ -346,17 +346,17 @@ void incluirEditoras (struct Editoras e1[], struct IdxEditoras i1[], int &cont, 
 	}
 }
 
-	e1[cont].cod = cod;
+	e1[cont].cod = cod;fflush(stdin);
     cout << "Nome: ";
-    cin >> e1[cont].nome;
+    cin.getline(e1[cont].nome,41);fflush(stdin);
     cout << "Endereço: ";
-    cin >> e1[cont].endereco;
+    cin.getline(e1[cont].endereco,51);fflush(stdin);
     cout << "Telefone: ";
-    cin >> e1[cont].telefone;
+    cin.getline(e1[cont].telefone,13);fflush(stdin);
     cout << "Cidade: ";
-    cin >> e1[cont].cidade;
+    cin.getline(e1[cont].cidade,31);fflush(stdin);
     cout << "Estado: ";
-    cin >> e1[cont].uf;
+    cin.getline(e1[cont].uf,3);fflush(stdin);
     e1[cont].status = 0;
     // inclusao na area de indices
     if(cont == 0){
@@ -387,8 +387,8 @@ void incluirLivros (struct Livros l1[], struct IdxLivros i1[], int &cont, int co
             f = m - 1;
     }
     if ((cod == i1[m].cod)){
-        cout << "\n\n Livro já existe";
-        cout << "Código: ";
+        cout << "\nLivro já existe";
+        cout << "\nCódigo: ";
     	cin >> cod;
     }
     else{
@@ -397,11 +397,11 @@ void incluirLivros (struct Livros l1[], struct IdxLivros i1[], int &cont, int co
 }
     // inclusao na area de indices
 
-	l1[cont].cod = cod;
+	l1[cont].cod = cod;fflush(stdin);
     cout << "Descricao: ";
-    cin >> l1[cont].desc;
+    cin.getline(l1[cont].desc,41);fflush(stdin);
     cout << "Codigo da Editora: ";
-    cin >> l1[cont].codEdit;
+    cin >> l1[cont].codEdit;fflush(stdin);
     cout << "Nome da Editora: " << buscarEditoras(e1,ie1, contEdit, l1[i].codEdit) << endl;
 	strcpy(l1[cont].statusEmp,"D");
     l1[cont].status = 0;
@@ -704,6 +704,7 @@ void menuAlunos (struct Alunos a1[], struct IdxAlunos i1[], int &cont){
 	int option = 0, x = 0, cod = 0;
 	
 	while(x == 0){
+	fflush(stdin);
 	system("cls");
 	cout << "\n\nAlunos";
 	cout << "\n0 - Voltar";
@@ -744,6 +745,7 @@ void menuEditoras (struct Editoras e1[], struct IdxEditoras i1[], int &cont){
 	int option = 0, x = 0, cod = 0;
 	
 	while(x == 0){
+	fflush(stdin);
 	system("cls");
 	cout << "\n\nEditoras";
 	cout << "\n0 - Voltar";
@@ -784,6 +786,7 @@ void menuLivros (struct Livros l1[], struct IdxLivros i1[], int &cont, struct Ed
 	int option = 0, x = 0, cod = 0;
 	
 	while(x == 0){
+	fflush(stdin);
 	system("cls");
 	cout << "\n\nLivros";
 	cout << "\n0 - Voltar";
@@ -824,6 +827,7 @@ void menuEmprestimos (struct Emprestimos e1[],struct IdxEmprestimos i1[], int &c
 	int option = 0, x = 0, cod = 0;
 	
 	while(x == 0){
+	fflush(stdin);
 	system("cls");
 	cout << "\n\nEmpréstimos";
 	cout << "\n0 - Voltar";
@@ -881,6 +885,7 @@ int main (){
 	
 	while(x == 1){
 		mainMenu();
+		fflush(stdin);
 		
 		cout << "\n\nDigite sua opção: ";
 		cin >> option;
